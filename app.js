@@ -52,13 +52,8 @@ app.post('/api/people', (req, res) => {
     const person = schema.validate(req.body)
     if(person.error){
         res.send(person.error.details[0].message)
+        return
     }
-
-    // const person = {
-    //     id : people.length + 1,
-    //     name : req.body.name
-    // }
-
     people.push(person)
     res.send(person)
 });
