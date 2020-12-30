@@ -1,4 +1,4 @@
-const e = require('express');
+const joi = require('joi')
 const express = require('express')
 const app = express()
 
@@ -20,7 +20,7 @@ const people = [
 ]
 
 
-
+// GET Request
 app.get('/', (req, res) => {
     res.send("Hello new user...")
 });
@@ -36,11 +36,28 @@ app.get('/api/people/:id', (req, res) => {
 });
 
 
+// POST Request
 app.post('/api/people', (req, res) => {
-    const person = {
-        id : people.length + 1,
-        name : req.body.name
+    
+    // let name = req.body.name
+    // if(!name || name.length < 3) {
+    //     res.status(400).send("Invalid input (req min 3 char)")
+    //     return
+    // }
+    
+    // Input Validation using joi package
+    const schema = joi.object({
+        name : joi.string().min(3).required()
+    });
+    const person = schema.validate(req.body)
+    if(person.error){
+        res.send(person.error.details[0].message)
     }
+
+    // const person = {
+    //     id : people.length + 1,
+    //     name : req.body.name
+    // }
 
     people.push(person)
     res.send(person)
