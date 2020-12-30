@@ -46,7 +46,7 @@ app.post('/api/people', (req, res) => {
     // }
     
     // Input Validation using joi package
-    const schema = joi.object({
+    const schema = joi.object({       
         name : joi.string().min(3).required()
     });
     const person = schema.validate(req.body)
@@ -55,8 +55,35 @@ app.post('/api/people', (req, res) => {
         return
     }
     people.push(person)
-    res.send(person)
+    res.send(people)
 });
+
+
+// PUT Request
+app.put('/api/people/:id', (req, res) => {
+    
+    // to check if person exist
+    person = people.find(c => c.id === parseInt(req.params.id))
+    if(!person) res.status(404).send("Person with given id not found")
+    
+    // input validation
+    const schema = joi.object({
+        name : joi.string().min(3).required()
+    });
+    
+    person = schema.validate(req.body)
+    console.log(person);
+    if(person.error){
+        res.send(person.error.details[0].message)
+        return
+    }
+    
+    // to update properties
+    person.name = req.body.name
+    res.send(people)
+});
+
+
 
 const port = process.env.PORT || 3000
 
